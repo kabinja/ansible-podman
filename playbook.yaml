@@ -1,0 +1,65 @@
+- name: Test Ansible
+  hosts: localhost
+  connection: local
+  become: false
+  gather_facts: false
+  vars:
+    homedir: ./build
+    container_registry: docker.io/library
+  tasks:
+    - name: "Create the directories"
+      ansible.builtin.file:
+        mode: "0755"
+        path: "{{ homedir }}/{{ item }}"
+        state: directory
+      loop:
+        - syscom
+        - sysorg
+
+    - name: "Create the httpd syscom file"
+      ansible.builtin.copy:
+        mode: "0755"
+        dest: "{{ homedir }}/syscom/index.html"
+        content: |
+          <html>
+            <header>
+              <title>SysAdmin.com</title>
+            </header>
+            <body>
+              <p>This is the SysAdmin website hosted on the .com domain</p>
+            </body>
+          </html>
+
+    - name: "Create the httpd sysorg file"
+      ansible.builtin.copy:
+        mode: "0755"
+        dest: "{{ homedir }}/sysorg/index.html"
+        content: |
+          <html>
+            <header>
+              <title>SysAdmin.org</title>
+            </header>
+            <body>
+              <p>This is the SysAdmin website hosted on the .org domain</p>
+            </body>
+          </html>
+
+    - name: "Create the syscom container"
+      containers.podman.podman_container:
+        name: syscom
+        hostname: syscom
+        image: "{{ container_registry }}/httpd:alpine3.20"
+        publish: 8080:80
+        volume:
+          - "{{ homedir }}/syscom:/usr/local/apache2/htdocs:Z"
+        state: started
+
+    - name: "Create the sysorg container"
+      containers.podman.podman_container:
+        name: sysorg
+        hostname: sysorg
+        image: "{{ container_registry }}/httpd:alpine3.20"
+        publish: 8081:80
+        volume:
+          - "{{ homedir }}/sysorg:/usr/local/apache2/htdocs:Z"
+        state: started

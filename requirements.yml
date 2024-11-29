@@ -1,0 +1,9 @@
+---
+collections:
+  # Install the posix package from galaxy to be able to interact with systemd
+  - name: ansible.posix
+    source: https://galaxy.ansible.com
+
+  # Install the podman package from galaxy to be able to interact with podman
+  - name: containers.podman
+    source: https://galaxy.ansible.com
