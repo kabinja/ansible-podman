@@ -55,6 +55,8 @@
         dest: /etc/systemd/system
 
     - name: Ensure postgres container is started and enabled
+      become: true
+      become_method: ansible.builtin.sudo
       ansible.builtin.systemd:
         name: container-syscom
         daemon_reload: true
