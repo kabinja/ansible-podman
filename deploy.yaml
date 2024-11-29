@@ -1,9 +1,10 @@
 - name: Test Ansible
   hosts: localhost
   connection: local
+  become: true
+  become_method: ansible.builtin.sudo
   gather_facts: false
   vars:
-    homedir: ./build
     container_registry: docker.io/library
   tasks:
     - name: "Create the directories"
@@ -28,35 +29,25 @@
             </body>
           </html>
 
-
     - name: "Create the syscom container"
       containers.podman.podman_container:
         name: syscom
         image: "{{ container_registry }}/httpd:alpine3.20"
+        ports:
+          - 8080:80
         volume:
           - "{{ homedir }}/syscom:/usr/local/apache2/htdocs:Z"
         rm: true
-        state: created
+        state: stopped
 
-    - name: "Create the sysorg container"
-      containers.podman.podman_container:
-        name: sysorg
-        image: "{{ container_registry }}/httpd:alpine3.20"
-        volume:
-          - "{{ homedir }}/sysorg:/usr/local/apache2/htdocs:Z"
-        rm: true
-        state: created
-
-    - name: Generate systemd unit file for postgres container
+    - name: Generate systemd unit file for syscom container
       containers.podman.podman_generate_systemd:
         name: syscom
         new: true
         no_header: true
         dest: /etc/systemd/system
 
-    - name: Ensure postgres container is started and enabled
-      become: true
-      become_method: ansible.builtin.sudo
+    - name: Ensure syscom container is started and enabled
       ansible.builtin.systemd:
         name: container-syscom
         daemon_reload: true
