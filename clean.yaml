@@ -9,4 +9,3 @@
         state: absent
       loop:
         - syscom
-        - sysorg
