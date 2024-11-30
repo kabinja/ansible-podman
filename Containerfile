@@ -1,4 +1,4 @@
-FROM docker.io/python:3.12-slim-bookworm  as base
+FROM docker.io/python:3.12-slim-bookworm as base
 
 ENV PYTHONFAULTHANDLER=1 \
     PYTHONHASHSEED=random \
