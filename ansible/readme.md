@@ -1,4 +1,4 @@
-# Deploying podman containers using ansible
+# Ansible
 
 ## Setting up the environment
 
