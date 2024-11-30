@@ -5,8 +5,6 @@
   become: true
   become_method: ansible.builtin.sudo
   gather_facts: false
-  vars:
-    container_registry: docker.io/library
   tasks:
     - name: "Build the app image"
       containers.podman.podman_image:
