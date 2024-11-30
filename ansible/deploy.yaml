@@ -16,15 +16,28 @@
         state: present
         force: true
 
+    - name: "Create super good secret"
+      containers.podman.podman_secret:
+        state: present
+        name: some-secret
+        data: "my super secret content"
+
+    - name: "Delete previous version of container if exists"
+      containers.podman.podman_container:
+        name: app
+        state: absent
+        delete_time: 10
+
     - name: "Create the app container"
       containers.podman.podman_container:
         name: app
         image: localhost/app
+        secrets:
+          - some-secret,type=env,target=SECRET_ENV
         ports:
           - 8081:8080
         rm: true
-        state: quadlet
-        force_restart: true
+        state: stopped
 
     - name: Generate systemd unit file for app container
       containers.podman.podman_generate_systemd:
