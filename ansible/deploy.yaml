@@ -16,6 +16,7 @@
           force_rm: true
           format: oci
         state: present
+        force: true
 
     - name: "Create the app container"
       containers.podman.podman_container:
