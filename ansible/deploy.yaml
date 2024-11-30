@@ -23,7 +23,8 @@
         ports:
           - 8081:8080
         rm: true
-        state: stopped
+        state: quadlet
+        force_restart: true
 
     - name: Generate systemd unit file for app container
       containers.podman.podman_generate_systemd:
@@ -36,5 +37,5 @@
       ansible.builtin.systemd:
         name: container-app
         daemon_reload: true
-        state: started
+        state: restarted
         enabled: true
