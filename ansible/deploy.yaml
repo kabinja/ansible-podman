@@ -1,0 +1,41 @@
+---
+- name: Test Ansible
+  hosts: localhost
+  connection: local
+  become: true
+  become_method: ansible.builtin.sudo
+  gather_facts: false
+  vars:
+    container_registry: docker.io/library
+  tasks:
+    - name: "Build the app image"
+      containers.podman.podman_image:
+        name: app
+        path: ..
+        build:
+          force_rm: true
+          format: oci
+        state: present
+
+    - name: "Create the app container"
+      containers.podman.podman_container:
+        name: app
+        image: localhost/app
+        ports:
+          - 8081:8080
+        rm: true
+        state: stopped
+
+    - name: Generate systemd unit file for app container
+      containers.podman.podman_generate_systemd:
+        name: app
+        new: true
+        no_header: true
+        dest: /etc/systemd/system
+
+    - name: Ensure app container is started and enabled
+      ansible.builtin.systemd:
+        name: container-app
+        daemon_reload: true
+        state: started
+        enabled: true

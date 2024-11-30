@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "fastapi-podman"
+version = "0.1.0"
+description = "Example of a fastapi application build and deployed using podman"
+authors = ["Renaud Rwemalika <renaudrwemalika@protonmail.com>"]
+packages = [{ include = "app" }]
+
+[tool.poetry.dependencies]
+python = "~3.12"
+fastapi = "^0.108.0"
+uvicorn = "0.32.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
